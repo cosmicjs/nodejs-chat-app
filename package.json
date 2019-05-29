@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prestart": "webpack",
+    "prestart": "webpack -p",
     "start": "NODE_ENV=production node index.js",
     "dev": "nodemon index.js & webpack --config ./webpack.config.js --watch --mode development",
     "client": "webpack-dev-server --config ./webpack.config.js --watch --mode development"

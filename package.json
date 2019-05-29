@@ -1,0 +1,38 @@
+{
+  "name": "cosmic-messenger",
+  "version": "1.0.0",
+  "description": "web based messaging service.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prestart": "webpack",
+    "start": "NODE_ENV=production node index.js",
+    "dev": "nodemon index.js & webpack --config ./webpack.config.js --watch --mode development",
+    "client": "webpack-dev-server --config ./webpack.config.js --watch --mode development"
+  },
+  "author": "JacobKnaack",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "socket.io": "^2.2.0",
+    "twilio": "^3.31.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
+    "nodemon": "^1.19.1",
+    "webpack": "^4.32.2",
+    "webpack-cli": "^3.3.2",
+    "webpack-dev-server": "^3.4.1"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
+  }
+}

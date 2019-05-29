@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "heroku-prebuild": "npm install --dev",
     "prestart": "webpack -p",
     "start": "NODE_ENV=production node index.js",
     "dev": "nodemon index.js & webpack --config ./webpack.config.js --watch --mode development",

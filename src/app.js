@@ -6,8 +6,6 @@ class App extends React.Component {
     return (
       <div className="app-container">
         <h1>Cosmic Messenger</h1>
-        <p>Render Test</p>
-        <p>Something New</p>
       </div>
     )
   }

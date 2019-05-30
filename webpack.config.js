@@ -1,5 +1,13 @@
+require('dotenv').config();
 const webpack = require('webpack');
+// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
 const dev = Boolean(process.env.NODE_ENV === 'production');
+let client_api = 'http://localhost:3000/api';
+if (!dev) {
+  client_api_url = process.env.__CLIENT_API_URL__;
+}
 
 module.exports = {
   entry: './src/app.js',
@@ -37,7 +45,11 @@ module.exports = {
     filename: 'bundle.js'
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
+    new CleanWebpackPlugin,
+    new webpack.DefinePlugin({
+      __API_URL__: JSON.stringify(client_api_url),
+    })
   ],
   devServer: {
     contentBase: './dist',

@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const dev = Boolean(process.env.NODE_ENV === 'production');
-let client_api = 'http://localhost:3000/api';
+let client_api_url = 'http://localhost:3000/api';
 if (!dev) {
   client_api_url = process.env.__CLIENT_API_URL__;
 }

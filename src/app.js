@@ -21,6 +21,7 @@ class App extends React.Component {
       user: {},
     }
     this.handleUser = this.handleUser.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
   }
 
   componentWillMount() {
@@ -69,7 +70,7 @@ class App extends React.Component {
           <header style={styles.header}>
             <div>
               {this.state.user.name
-                ? <h3>{this.state.user.name} <span style={styles.appBttn}><FiLogOut /></span></h3>
+                ? <h3>{this.state.user.name} <span style={styles.appBttn} onClick={this.handleLogout}><FiLogOut /></span></h3>
                 : null
               }
             </div>
@@ -105,7 +106,7 @@ class App extends React.Component {
   }
 
   handleLogout() {
-    axios.post(`${__API_URL__}/logout`, { userName: this.state.name })
+    axios.post(`${__API_URL__}/logout`, { userName: this.state.user.name.replace(/\s+/g, '-').toLowerCase() })
       .then(() => this.setState({ user: {} }))
       .catch(err => console.error(err));
   }

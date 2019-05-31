@@ -1,11 +1,14 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
+import MessageList from './messageList.js';
+import UserList from './userList.js';
 
 class Chat extends React.Component {
   constructor() {
     super()
     this.state = {
       messages: [],
+      users: [],
     }
   }
 
@@ -16,10 +19,11 @@ class Chat extends React.Component {
 
     return (
       <div className="chat-container">
-        Chat Container
+        <MessageList />
+        <UserList />
       </div>
     )
   }
 }
 
-export default Chat
+export default Chat;

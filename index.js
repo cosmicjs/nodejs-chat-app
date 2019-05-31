@@ -46,7 +46,6 @@ app.post('/api/register', async function (request, response) {
     response.status(200).send({ _id: user.object._id, name: user.object.title, created_at: user.object.created_at });
     return;
   } catch (err) {
-    console.log(err);
     response.status(400).send({ "message": 'Error registering username', "error": err });
     return;
   }
@@ -63,12 +62,21 @@ app.post('/api/message', function (request, response) {
 /**
  * Logout route that destroys user object
  */
-app.post('/api/logout', function (request, response) {
+app.post('/api/logout', async function (request, response) {
   const { userName } = request.body;
   if (!userName) {
     response.status(400).send('Error leaving chat');
   }
-  response.status(204).end();
+  try {
+    let deleteUserData = await bucket.deleteObject({
+      slug: userName
+    });
+    response.status(204).send(deleteUserData);
+    return;
+  } catch (err) {
+    response.status(400).send({ "message": "unable to remove user" })
+  }
+
 })
 
 /**

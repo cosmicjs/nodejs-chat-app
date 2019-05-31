@@ -3,7 +3,7 @@ const webpack = require('webpack');
 // const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-const dev = Boolean(process.env.NODE_ENV === 'production');
+const dev = Boolean(process.env.NODE_ENV !== 'production');
 let client_api_url = 'http://localhost:3000/api';
 if (!dev) {
   client_api_url = process.env.__CLIENT_API_URL__;
@@ -11,7 +11,7 @@ if (!dev) {
 
 module.exports = {
   entry: './src/app.js',
-  mode: dev ? 'developement' : 'production',
+  mode: dev ? 'development' : 'production',
   module: {
     rules: [
       {

@@ -5,6 +5,7 @@ import { ApolloProvider } from 'react-apollo';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { FiLogOut } from "react-icons/fi";
 import axios from 'axios';
+import { socket } from './lib/socket.js';
 import LoginForm from './components/loginForm/loginForm.js';
 import Chat from './components/chat/index.js';
 
@@ -42,7 +43,11 @@ class App extends React.Component {
   render() {
     console.log(this.state)
     const styles = {
+      container: {
+        height: '100%',
+      },
       header: {
+        maxHeight: '60px',
         padding: '0 15px',
         display: 'flex',
         flexDirection: 'row',
@@ -52,6 +57,7 @@ class App extends React.Component {
         boxShadow: ' 0 4px 2px -2px gray',
       },
       content: {
+        height: 'calc(100% - 60px)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -66,7 +72,7 @@ class App extends React.Component {
 
     return (
       <ApolloProvider client={client}>
-        <div className="app-container" >
+        <div className="app-container" style={styles.container}>
           <header style={styles.header}>
             <div>
               {this.state.user.name

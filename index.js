@@ -4,7 +4,7 @@ const express = require('express');
 const path = require('path');
 const bodyparser = require('body-parser');
 const app = express();
-const http = require('http').Server(app);
+const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const Cosmic = require('cosmicjs');
 const api = Cosmic();
@@ -12,8 +12,7 @@ const bucket = api.bucket({
   slug: 'cosmic-messenger',
   read_key: process.env.__COSMIC_READ_KEY__,
   write_key: process.env.__COSMIC_WRITE_KEY__
-})
-
+});
 
 // configure our application level middleware
 if (process.env.NODE_ENV === 'development') {
@@ -25,6 +24,34 @@ app.use('/api', bodyparser.json());
 const PORT = process.env.PORT || 3000;
 
 /**
+ * Socket configuration for client events
+ * 
+ * Events:
+ *  @register - should emit when a user registers a username.
+ *  @session - should emit when a user enters chat.
+ *  @logout - should emit when a new user logs out.
+ *  @message - should emit a message to users when users send a message.
+ * 
+ */
+io.on('connection', function (socket) {
+  socket.on('register', function (user) {
+
+  });
+
+  socket.on('session', function (user) {
+
+  });
+
+  socket.on('logout', function (user) {
+
+  });
+
+  socket.on('message', function (msg) {
+
+  });
+})
+
+/**
  * 
  * Below we are configuring our server routes for creating
  * resources on Cosmic JS and serving our React Application
@@ -32,9 +59,11 @@ const PORT = process.env.PORT || 3000;
  * Login Route that returns a user object
  */
 app.post('/api/register', async function (request, response) {
-  const { userName } = request.body;
+  console.log(request.headers);
+  const { username } = request.body;
   if (!userName) {
-    response.status(400).send('Error registering username');
+    response.status(400).send({ 'message': '/api/register error, no userName on request body' });
+    return;
   }
   try {
     let user = await bucket.getObjects({ type: 'users', filters: { title: userName } });
@@ -42,7 +71,7 @@ app.post('/api/register', async function (request, response) {
       response.status(400).send({ "message": "user is already logged in" });
       return;
     }
-    user = await bucket.addObject({ title: userName, type_slug: 'users' });
+    user = await bucket.addObject({ title: username, type_slug: 'users' });
     response.status(200).send({ _id: user.object._id, name: user.object.title, created_at: user.object.created_at });
     return;
   } catch (err) {
@@ -86,6 +115,6 @@ app.get(['/', '/:username'], (req, res) => {
   res.sendFile(path.join(__dirname, './public', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`Cosmic Messenger listening at port : ${PORT}`);
+http.listen(PORT, () => {
+  console.log(`Cosmic Messenger listening on port : ${PORT}`);
 });

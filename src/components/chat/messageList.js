@@ -15,11 +15,37 @@ const GET_MESSAGES = gql`
 `
 
 class MessageList extends React.Component {
+  constructor() {
+    super()
+    this.state = {
+      messages: [],
+    }
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    const tempState = state;
+    if (props.data.objectsByType) {
+      tempState.messages = props.data.objectsByType;
+    }
+
+    return tempState;
+  }
+
   render() {
-    console.log(this.props.data)
+    // const styles = {
+
+    // }
+
     return (
       <div className="messageList-container">
-        {/* Message list spreads here */}
+        {this.state.messages.map(message => {
+          return (
+            <div
+              key={message._id}
+              dangerouslySetInnerHTML={{ __html: message.content }}
+            />
+          )
+        })}
       </div>
     )
   }

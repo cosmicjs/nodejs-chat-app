@@ -7,6 +7,7 @@ h6,
 li,
 p,
 a,
+div,
 label,
 button,
 input {
@@ -15,4 +16,8 @@ input {
 
 #app {
   height: 100vh;
+}
+
+.message-container p {
+  margin: 0;
 }

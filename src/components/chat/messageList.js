@@ -1,6 +1,7 @@
 import React from 'react';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
+import Socket from '../../lib/socket.js';
 
 const GET_MESSAGES = gql`
   query MessageList($read_key: String!) {
@@ -22,6 +23,10 @@ class MessageList extends React.Component {
     }
   }
 
+  componentDidMount() {
+    Socket.subscribeToMessages(this.props.data.refetch);
+  }
+
   static getDerivedStateFromProps(props, state) {
     const tempState = state;
     if (props.data.objectsByType) {
@@ -32,9 +37,13 @@ class MessageList extends React.Component {
   }
 
   render() {
-    // const styles = {
-
-    // }
+    const styles = {
+      message: {
+        padding: '10px',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
+        borderRadius: '5px',
+      }
+    }
 
     return (
       <div className="messageList-container">
@@ -42,7 +51,9 @@ class MessageList extends React.Component {
           return (
             <div
               key={message._id}
+              className="message-container"
               dangerouslySetInnerHTML={{ __html: message.content }}
+              style={styles.message}
             />
           )
         })}

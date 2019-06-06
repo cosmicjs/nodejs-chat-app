@@ -1,5 +1,8 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
+import { socket } from '../../lib/socket.js';
+import axios from 'axios';
+import { IoIosChatboxes } from "react-icons/io";
 import MessageList from './messageList.js';
 import UserList from './userList.js';
 
@@ -9,9 +12,10 @@ class Chat extends React.Component {
     this.state = {
       messages: [],
       users: [],
-      text: '',
+      content: '',
     }
     this.handleInput = this.handleInput.bind(this);
+    this.handleMessage = this.handleMessage.bind(this);
   }
 
   render() {
@@ -30,20 +34,45 @@ class Chat extends React.Component {
       },
       inputContainer: {
         width: '100%',
-        height: '50px',
+        height: '100px',
+        borderTop: 'thin solid #a9a9a9',
+        paddingTop: '5px',
+        display: 'flex',
+        flexDirections: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+      },
+      input: {
+        width: 'calc(100% - 100px)',
+        height: '100%',
+        border: 'none',
+        outline: 'none',
+        fontSize: '110%',
+        resize: 'none',
+      },
+      messageBtn: {
+        height: '100%',
+        width: '75px',
+        fontSize: '200%'
       }
     }
 
     return (
       <div className="chat-container" style={styles.container}>
-        <MessageList user={this.props.user} />
         <UserList user={this.props.user} />
-        <div style={styles.inputContainer}>
-          <input
-            value={this.state.text}
+        <MessageList user={this.props.user} />
+        <form style={styles.inputContainer} onSubmit={this.handleMessage}>
+          <textarea
+            style={styles.input}
+            name="content"
+            value={this.state.content}
             onChange={this.handleInput}
+            placeholder="Send a message ..."
           />
-        </div>
+          <button style={styles.messageBtn} type="submit">
+            <IoIosChatboxes />
+          </button>
+        </form>
       </div>
     );
   }
@@ -51,6 +80,19 @@ class Chat extends React.Component {
   handleInput(e) {
     const { name, value } = e.target;
     this.setState({ [name]: value });
+  }
+
+  handleMessage(e) {
+    e.preventDefault()
+    if (this.state.content) {
+      axios.post(`${__API_URL__}/message`, {
+        content: this.state.content,
+      })
+        .then(res => {
+          socket.emit('message', res.data);
+        })
+        .catch(err => this.setState({ requestError: err.response.data }));
+    }
   }
 }
 

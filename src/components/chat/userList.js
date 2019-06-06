@@ -1,6 +1,7 @@
 import React from 'react';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
+import Socket from '../../lib/socket.js';
 
 const GET_USERS = gql`
   query UserList($read_key: String!) {
@@ -14,11 +15,48 @@ const GET_USERS = gql`
 `
 
 class UserList extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      users: []
+    }
+  }
+
+  componentDidMount() {
+    Socket.subscribeToRegister(this.props.data.refetch);
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    console.log(props);
+    const tempState = Object.assign({}, state)
+    if (props.data.objectsByType) {
+      tempState.users = props.data.objectsByType
+    }
+
+    return tempState
+  }
+
   render() {
-    console.log(this.props.data)
+    const styles = {
+      container: {
+        position: 'fixed',
+        zIndex: '100',
+        top: '75px',
+        left: '0',
+      }
+    }
+
     return (
-      <div className="userList-container">
-        {/* List of users spreads here */}
+      <div className="userList-container" style={styles.container}>
+        {this.state.users.map(user => {
+          if (user._id !== this.props.user._id) {
+            return (
+              <p>{user.title}</p>
+            )
+          }
+
+          return null
+        })}
       </div>
     )
   }

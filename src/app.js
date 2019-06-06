@@ -5,7 +5,7 @@ import { ApolloProvider } from 'react-apollo';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { FiLogOut } from "react-icons/fi";
 import axios from 'axios';
-import { socket } from './lib/socket.js';
+import Socket, { socket } from './lib/socket.js';
 import LoginForm from './components/loginForm/loginForm.js';
 import Chat from './components/chat/index.js';
 

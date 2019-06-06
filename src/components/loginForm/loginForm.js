@@ -1,13 +1,13 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-// import { FlexboxGrid, Panel, Form, FormGroup, FormControl, ControlLabel, Button, ButtonToolbar } from 'rsuite';
+import { socket } from '../../lib/socket.js';
 import axios from 'axios';
 
 class LoginForm extends React.Component {
   constructor() {
     super()
     this.state = {
-      userName: '',
+      username: '',
       requestError: {},
     }
     this.handleInput = this.handleInput.bind(this)
@@ -57,10 +57,10 @@ class LoginForm extends React.Component {
               : <label>Enter a Username</label>
             }
             <input
-              name="userName"
+              name="username"
               placeholder="Username"
               style={styles.userInput}
-              value={this.state.userName}
+              value={this.state.username}
               onChange={this.handleInput}
               autoFocus
             />
@@ -89,13 +89,13 @@ class LoginForm extends React.Component {
   handleRegister(e) {
     e.preventDefault()
     axios.post(`${__API_URL__}/register`, {
-      userName: this.state.userName,
+      username: this.state.username,
     })
       .then(res => {
-        console.log(res.data)
-        this.props.handleUser(res.data)
+        this.props.handleUser(res.data);
+        socket.emit('register', res.data);
       })
-      .catch(err => this.setState({ requestError: err.response.data }))
+      .catch(err => this.setState({ requestError: err.response.data }));
   }
 }
 

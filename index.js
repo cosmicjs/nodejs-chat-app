@@ -4,6 +4,7 @@ const express = require('express');
 const path = require('path');
 const bodyparser = require('body-parser');
 const app = express();
+const session = require('express-session');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const Cosmic = require('cosmicjs');
@@ -21,6 +22,11 @@ if (process.env.NODE_ENV === 'development') {
 }
 app.use('/', express.static('./dist'));
 app.use('/api', bodyparser.json());
+app.use(session({
+  secret: process.env.__API_SECRET__,
+  resave: false,
+  saveUninitialized: true,
+}))
 const PORT = process.env.PORT || 3000;
 
 /**
@@ -35,7 +41,7 @@ const PORT = process.env.PORT || 3000;
  */
 io.on('connection', function (socket) {
   socket.on('register', function (user) {
-
+    io.emit('register', user);
   });
 
   socket.on('session', function (user) {
@@ -47,7 +53,7 @@ io.on('connection', function (socket) {
   });
 
   socket.on('message', function (msg) {
-
+    io.emit('message', msg);
   });
 })
 
@@ -59,19 +65,19 @@ io.on('connection', function (socket) {
  * Login Route that returns a user object
  */
 app.post('/api/register', async function (request, response) {
-  console.log(request.headers);
   const { username } = request.body;
-  if (!userName) {
+  if (!username) {
     response.status(400).send({ 'message': '/api/register error, no userName on request body' });
     return;
   }
   try {
-    let user = await bucket.getObjects({ type: 'users', filters: { title: userName } });
+    let user = await bucket.getObjects({ type: 'users', filters: { title: username } });
     if (user.status !== 'empty') {
       response.status(400).send({ "message": "user is already logged in" });
       return;
     }
     user = await bucket.addObject({ title: username, type_slug: 'users' });
+    request.session.user_id = user.object._id;
     response.status(200).send({ _id: user.object._id, name: user.object.title, created_at: user.object.created_at });
     return;
   } catch (err) {
@@ -80,21 +86,13 @@ app.post('/api/register', async function (request, response) {
   }
 });
 
-/** 
- * Creates a message
- */
-app.post('/api/message', function (request, response) {
-  // send message to cosmic js
-});
-
-
 /**
  * Logout route that destroys user object
  */
 app.post('/api/logout', async function (request, response) {
   const { userName } = request.body;
   if (!userName) {
-    response.status(400).send('Error leaving chat');
+    response.status(400).send('No username');
   }
   try {
     let deleteUserData = await bucket.deleteObject({
@@ -103,9 +101,26 @@ app.post('/api/logout', async function (request, response) {
     response.status(204).send(deleteUserData);
     return;
   } catch (err) {
-    response.status(400).send({ "message": "unable to remove user" })
+    response.status(400).send({ "message": "unable to remove user" });
   }
+});
 
+app.post('/api/message', async function (request, response) {
+  console.log(request.session);
+  const { content } = request.body;
+  try {
+    let message = await bucket.addObject({
+      title: content,
+      type_slug: "messages",
+      content: content,
+      metafields: [
+        { "key": "user_id", "type": "text", "value": request.session.user_id }
+      ],
+    });
+    response.status(200).send(message);
+  } catch (err) {
+    response.status(400).send({ "message": "Error creating message", "error": err });
+  }
 })
 
 /**

@@ -27,7 +27,6 @@ class UserList extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    console.log(props);
     const tempState = Object.assign({}, state)
     if (props.data.objectsByType) {
       tempState.users = props.data.objectsByType
@@ -51,7 +50,7 @@ class UserList extends React.Component {
         {this.state.users.map(user => {
           if (user._id !== this.props.user._id) {
             return (
-              <p>{user.title}</p>
+              <p key={user._id}>{user.title}</p>
             )
           }
 

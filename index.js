@@ -24,7 +24,7 @@ app.use('/', express.static('./dist'));
 app.use('/api', bodyparser.json());
 app.use(session({
   secret: process.env.__API_SECRET__,
-  resave: false,
+  resave: true,
   saveUninitialized: true,
 }))
 const PORT = process.env.PORT || 3000;
@@ -44,10 +44,6 @@ io.on('connection', function (socket) {
     io.emit('register', user);
   });
 
-  socket.on('session', function (user) {
-
-  });
-
   socket.on('logout', function (user) {
 
   });
@@ -55,7 +51,7 @@ io.on('connection', function (socket) {
   socket.on('message', function (msg) {
     io.emit('message', msg);
   });
-})
+});
 
 /**
  * 
@@ -64,8 +60,8 @@ io.on('connection', function (socket) {
  * 
  * Login Route that returns a user object
  */
-app.post('/api/register', async function (request, response) {
-  const { username } = request.body;
+app.post('/api/register', async function (req, response) {
+  const { username } = req.body;
   if (!username) {
     response.status(400).send({ 'message': '/api/register error, no userName on request body' });
     return;
@@ -77,8 +73,10 @@ app.post('/api/register', async function (request, response) {
       return;
     }
     user = await bucket.addObject({ title: username, type_slug: 'users' });
-    request.session.user_id = user.object._id;
-    response.status(200).send({ _id: user.object._id, name: user.object.title, created_at: user.object.created_at });
+    req.session.user_id = user.object._id;
+    response.status(200)
+      .cookie('session_user', user.object._id)
+      .send({ _id: user.object._id, name: user.object.title, created_at: user.object.created_at });
     return;
   } catch (err) {
     response.status(400).send({ "message": 'Error registering username', "error": err });
@@ -89,8 +87,8 @@ app.post('/api/register', async function (request, response) {
 /**
  * Logout route that destroys user object
  */
-app.post('/api/logout', async function (request, response) {
-  const { userName } = request.body;
+app.post('/api/logout', async function (req, response) {
+  const { userName } = req.body;
   if (!userName) {
     response.status(400).send('No username');
   }
@@ -105,16 +103,20 @@ app.post('/api/logout', async function (request, response) {
   }
 });
 
-app.post('/api/message', async function (request, response) {
-  console.log(request.session);
-  const { content } = request.body;
+app.post('/api/message', async function (req, response) {
+  const { content } = req.body;
+  if (!req.session.user_id) {
+    response.status(401).send({ "message": "Unauthorized, no session data present" });
+    return;
+  }
+
   try {
     let message = await bucket.addObject({
       title: content,
       type_slug: "messages",
       content: content,
       metafields: [
-        { "key": "user_id", "type": "text", "value": request.session.user_id }
+        { "key": "user_id", "type": "text", "value": req.session.user_id }
       ],
     });
     response.status(200).send(message);

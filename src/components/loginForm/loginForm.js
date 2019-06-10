@@ -25,6 +25,7 @@ class LoginForm extends React.Component {
       },
       form: {
         height: '100%',
+        fontSize: '130%',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-around',
@@ -33,6 +34,7 @@ class LoginForm extends React.Component {
       userInput: {
         height: '25px',
         padding: '5px',
+        fontSize: '70%',
         border: 'thin solid #29ABE2',
         borderRadius: '5px',
         outline: 'none',
@@ -40,6 +42,7 @@ class LoginForm extends React.Component {
       button: {
         color: '#ffffff',
         outline: 'none',
+        fontSize: '70%',
         cursor: 'pointer',
         borderRadius: '5px',
         backgroundColor: '#29ABE2',
@@ -51,6 +54,7 @@ class LoginForm extends React.Component {
     if (!Object.keys(this.props.user).length) {
       return (
         <div className="loginForm-container" style={styles.container}>
+
           <form style={styles.form}>
             {this.state.requestError.message
               ? <label>That Username is already in use</label>

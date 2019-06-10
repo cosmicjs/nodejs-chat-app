@@ -44,6 +44,7 @@ class Chat extends React.Component {
       },
       input: {
         width: 'calc(100% - 100px)',
+        maxWidth: '800px',
         height: '100%',
         border: 'none',
         outline: 'none',
@@ -53,7 +54,8 @@ class Chat extends React.Component {
       messageBtn: {
         height: '100%',
         width: '75px',
-        fontSize: '200%'
+        fontSize: '200%',
+
       }
     }
 
@@ -61,7 +63,11 @@ class Chat extends React.Component {
       <div className="chat-container" style={styles.container}>
         <UserList user={this.props.user} />
         <MessageList user={this.props.user} />
-        <form style={styles.inputContainer} onSubmit={this.handleMessage}>
+        <form
+          ref={(el) => this.formRef = el}
+          style={styles.inputContainer}
+          onSubmit={this.handleMessage}
+        >
           <textarea
             style={styles.input}
             name="content"
@@ -87,9 +93,11 @@ class Chat extends React.Component {
     if (this.state.content) {
       axios.post(`${__API_URL__}/message`, {
         content: this.state.content,
+        withCredentials: 'true',
       })
         .then(res => {
           socket.emit('message', res.data);
+          this.formRef.reset();
         })
         .catch(err => this.setState({ requestError: err.response.data }));
     }

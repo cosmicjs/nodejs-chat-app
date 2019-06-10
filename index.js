@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const bodyparser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const app = express();
 const session = require('express-session');
 const http = require('http').createServer(app);
@@ -22,6 +23,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 app.use('/', express.static('./dist'));
 app.use('/api', bodyparser.json());
+app.use(cookieParser());
 app.use(session({
   secret: process.env.__API_SECRET__,
   resave: true,
@@ -92,6 +94,9 @@ app.post('/api/logout', async function (req, response) {
   if (!userName) {
     response.status(400).send('No username');
   }
+  if (req.session) {
+    req.session.destroy();
+  }
   try {
     let deleteUserData = await bucket.deleteObject({
       slug: userName
@@ -129,6 +134,9 @@ app.post('/api/message', async function (req, response) {
  * Serves our entry file for our compiled react applications
  */
 app.get(['/', '/:username'], (req, res) => {
+  if (req.cookies.session_user) {
+    req.session.user_id = req.cookies.session_user;
+  }
   res.sendFile(path.join(__dirname, './public', 'index.html'));
 });
 

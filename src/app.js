@@ -9,6 +9,7 @@ import Socket, { socket } from './lib/socket.js';
 import LoginForm from './components/loginForm/loginForm.js';
 import Chat from './components/chat/index.js';
 
+import logo from '../public/logo.svg';
 import './_app.scss';
 
 const client = new ApolloClient({
@@ -41,20 +42,23 @@ class App extends React.Component {
   }
 
   render() {
-    console.log(this.state)
     const styles = {
       container: {
         height: '100%',
       },
       header: {
         maxHeight: '60px',
-        padding: '0 15px',
+        padding: '0 30px',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'flex-start',
         backgroundColor: '#29ABE2',
         color: '#ffffff',
         boxShadow: ' 0 4px 2px -2px gray',
+      },
+      logo: {
+        width: '50px',
+        marginRight: '20px',
       },
       content: {
         height: 'calc(100% - 60px)',
@@ -74,6 +78,7 @@ class App extends React.Component {
       <ApolloProvider client={client}>
         <div className="app-container" style={styles.container}>
           <header style={styles.header}>
+            <img style={styles.logo} src={logo} />
             <div>
               {this.state.user.name
                 ? <h3>{this.state.user.name} <span style={styles.appBttn} onClick={this.handleLogout}><FiLogOut /></span></h3>

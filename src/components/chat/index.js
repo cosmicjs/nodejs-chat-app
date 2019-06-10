@@ -15,6 +15,7 @@ class Chat extends React.Component {
       content: '',
     }
     this.handleInput = this.handleInput.bind(this);
+    this.onEnterPress = this.onEnterPress.bind(this);
     this.handleMessage = this.handleMessage.bind(this);
   }
 
@@ -30,21 +31,20 @@ class Chat extends React.Component {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-end',
-        alignItems: 'center',
+        alignItems: 'flex-end',
       },
       inputContainer: {
-        width: '100%',
-        height: '100px',
-        borderTop: 'thin solid #a9a9a9',
-        paddingTop: '5px',
+        width: 'calc(100% - 10px)',
+        height: 'calc(150px - 40px)',
+        borderTop: 'thin solid #d3d3d3',
+        padding: '5px 20px',
         display: 'flex',
         flexDirections: 'row',
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         alignItems: 'center'
       },
       input: {
-        width: 'calc(100% - 100px)',
-        maxWidth: '800px',
+        width: 'calc(100% - 375px)',
         height: '100%',
         border: 'none',
         outline: 'none',
@@ -64,7 +64,6 @@ class Chat extends React.Component {
         <UserList user={this.props.user} />
         <MessageList user={this.props.user} />
         <form
-          ref={(el) => this.formRef = el}
           style={styles.inputContainer}
           onSubmit={this.handleMessage}
         >
@@ -73,6 +72,7 @@ class Chat extends React.Component {
             name="content"
             value={this.state.content}
             onChange={this.handleInput}
+            onKeyDown={this.onEnterPress}
             placeholder="Send a message ..."
           />
           <button style={styles.messageBtn} type="submit">
@@ -88,16 +88,22 @@ class Chat extends React.Component {
     this.setState({ [name]: value });
   }
 
+  onEnterPress(e) {
+    if (e.keyCode == 13 && e.shiftKey == false) {
+      this.handleMessage(e);
+    }
+  }
+
   handleMessage(e) {
-    e.preventDefault()
+    e.preventDefault();
     if (this.state.content) {
       axios.post(`${__API_URL__}/message`, {
         content: this.state.content,
         withCredentials: 'true',
       })
         .then(res => {
+          this.setState({ content: '' });
           socket.emit('message', res.data);
-          this.formRef.reset();
         })
         .catch(err => this.setState({ requestError: err.response.data }));
     }

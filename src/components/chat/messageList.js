@@ -16,6 +16,10 @@ const GET_MESSAGES = gql`
   }
 `
 
+function sortArrayByDate(arr) {
+  return arr.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+}
+
 class MessageList extends React.Component {
   constructor() {
     super()
@@ -31,7 +35,7 @@ class MessageList extends React.Component {
   static getDerivedStateFromProps(props, state) {
     const tempState = state;
     if (props.data.objectsByType) {
-      tempState.messages = props.data.objectsByType;
+      tempState.messages = sortArrayByDate(props.data.objectsByType);
     }
 
     return tempState;
@@ -40,14 +44,11 @@ class MessageList extends React.Component {
   render() {
     const styles = {
       container: {
-        width: '90%',
-        maxWidth: '900px',
-        maxHeight: 'calc(100% - 160px)',
-        margin: '10px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-end',
-        alignItems: 'flex-start',
+        width: 'calc(100% - 285px)',
+        maxHeight: 'calc(100% - 150px)',
+        marginLeft: '10px',
+        paddingRight: '10px',
+        overflowY: 'auto',
       },
       loading: {
         height: '200px',
@@ -62,16 +63,40 @@ class MessageList extends React.Component {
         justifyContent: 'center',
         alignItems: 'center',
       },
+      messageWrapper: {
+        height: '50px',
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+      },
       message: {
         width: 'auto',
-        margin: '5px 0',
+        zIndex: '99',
         padding: '10px',
         backgroundColor: '#20F2FA',
         color: '#383838',
         boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
         borderRadius: '5px',
       },
-      isUser: {
+      arrow: {
+        position: 'relative',
+        width: '0',
+        height: '0',
+        zIndex: '100',
+        borderTop: '10px solid transparent',
+        borderBottom: '10px solid transparent',
+        borderRight: '10px solid #20F2FA',
+      },
+      isUserWrapper: {
+        justifyContent: 'flex-end',
+      },
+      isUserArrow: {
+        borderRight: 'none',
+        borderLeft: '10px solid #1FF0BD',
+      },
+      isUserMessage: {
         textAlign: 'right',
         backgroundColor: '#1FF0BD',
       },
@@ -96,14 +121,31 @@ class MessageList extends React.Component {
 
     return (
       <div className="messageList-container" style={styles.container}>
+        <div>End of Messages</div>
         {this.state.messages.map(message => {
           return (
             <div
               key={message._id}
-              className="message-container"
-              dangerouslySetInnerHTML={{ __html: message.content }}
-              style={this.props.user._id === message.user_id ? Object.assign(styles.message, styles.isUser) : styles.message}
-            />
+              style={this.props.user._id === message.metadata.user_id
+                ? Object.assign({}, styles.messageWrapper, styles.isUserWrapper)
+                : styles.messageWrapper}
+            >
+              {this.props.user._id !== message.metadata.user_id
+                ? <div style={styles.arrow}></div>
+                : null
+              }
+              <span
+                className="message-container"
+                dangerouslySetInnerHTML={{ __html: message.content }}
+                style={this.props.user._id === message.metadata.user_id
+                  ? Object.assign({}, styles.message, styles.isUserMessage)
+                  : styles.message}
+              />
+              {this.props.user._id === message.metadata.user_id
+                ? <div style={Object.assign({}, styles.arrow, styles.isUserArrow)}></div>
+                : null
+              }
+            </div>
           )
         })}
       </div>

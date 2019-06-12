@@ -6,7 +6,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const dev = Boolean(process.env.NODE_ENV !== 'production');
 let client_api_url = 'http://localhost:3000/api';
 if (!dev) {
-  client_api_url = process.env.__CLIENT_API_URL__;
+  client_api_url = `${process.env.__API_ORIGIN__}/api`;
 }
 
 module.exports = {
@@ -49,6 +49,7 @@ module.exports = {
     new CleanWebpackPlugin,
     new webpack.DefinePlugin({
       __API_URL__: JSON.stringify(client_api_url),
+      __API_ORIGIN__: JSON.stringify(process.env.__API_ORIGIN__),
       __COSMIC_READ_KEY__: JSON.stringify(process.env.__COSMIC_READ_KEY__),
       __COSMIC_WRITE_KEY__: JSON.stringify(process.env.__COSMIC_WRITE_KEY__),
     })

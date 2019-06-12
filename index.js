@@ -37,7 +37,6 @@ const PORT = process.env.PORT || 3000;
  * 
  * Events:
  *  @register - should emit when a user registers a username.
- *  @session - should emit when a user enters chat.
  *  @logout - should emit when a new user logs out.
  *  @message - should emit a message to users when users send a message.
  * 

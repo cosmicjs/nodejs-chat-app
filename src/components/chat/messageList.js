@@ -113,6 +113,7 @@ class MessageList extends React.Component {
         position: 'relative',
         width: '0',
         height: '0',
+        marginLeft: '5px',
         zIndex: '100',
         borderTop: '10px solid transparent',
         borderBottom: '10px solid transparent',
@@ -138,6 +139,7 @@ class MessageList extends React.Component {
         justifyContent: 'flex-end',
       },
       isUserArrow: {
+        marginLeft: '0',
         marginRight: '5px',
         borderRight: 'none',
         borderLeft: '10px solid #47C8FF',

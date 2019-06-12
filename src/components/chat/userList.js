@@ -24,6 +24,7 @@ class UserList extends React.Component {
 
   componentDidMount() {
     Socket.subscribeToRegister(this.props.data.refetch);
+    Socket.subscribeToLogout(this.props.data.refetch);
   }
 
   static getDerivedStateFromProps(props, state) {

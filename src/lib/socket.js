@@ -1,6 +1,6 @@
 import openSocket from 'socket.io-client';
 
-export const socket = openSocket('http://localhost:3000');
+export const socket = openSocket(__API_ORIGIN__);
 
 const subscribeToMessages = (callback) => {
   socket.on('message', message => callback(null, message));
@@ -12,7 +12,13 @@ const subscribeToRegister = (callback) => {
   socket.emit('subscribeToRegister');
 }
 
+const subscribeToLogout = (callback) => {
+  socket.on('logout', user => callback(null, user));
+  socket.emit('subscribeToLogout');
+}
+
 export default {
   subscribeToMessages,
   subscribeToRegister,
+  subscribeToLogout,
 }

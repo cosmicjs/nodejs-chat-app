@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { socket } from '../../lib/socket.js';
 import axios from 'axios';
-import { IoIosChatboxes } from "react-icons/io";
+import { IoIosSend } from "react-icons/io";
 import MessageList from './messageList.js';
 import UserList from './userList.js';
 
@@ -10,13 +10,13 @@ class Chat extends React.Component {
   constructor() {
     super();
     this.state = {
-      messages: [],
-      users: [],
       content: '',
+      selectedUsers: [],
     }
     this.handleInput = this.handleInput.bind(this);
     this.onEnterPress = this.onEnterPress.bind(this);
     this.handleMessage = this.handleMessage.bind(this);
+    this.handleUserSelect = this.handleUserSelect.bind(this);
   }
 
   render() {
@@ -35,13 +35,12 @@ class Chat extends React.Component {
       },
       inputContainer: {
         width: 'calc(100% - 10px)',
-        height: 'calc(150px - 40px)',
-        borderTop: 'thin solid #d3d3d3',
+        height: '110px',
         padding: '5px 20px',
         display: 'flex',
         flexDirections: 'row',
         justifyContent: 'flex-end',
-        alignItems: 'center'
+        alignItems: 'flex-start'
       },
       input: {
         width: 'calc(100% - 375px)',
@@ -52,22 +51,36 @@ class Chat extends React.Component {
         resize: 'none',
       },
       messageBtn: {
-        height: '100%',
+        height: '30px',
         width: '75px',
+        border: 'none',
+        borderRadius: '10px',
+        outline: 'none',
+        backgroundColor: '#ffffff',
+        color: '#29ABE2',
         fontSize: '200%',
-
+        cursor: 'pointer',
       }
     }
 
     return (
       <div className="chat-container" style={styles.container}>
-        <UserList user={this.props.user} />
-        <MessageList user={this.props.user} />
+        <UserList
+          mobileMenuActive={this.props.mobileMenuActive}
+          user={this.props.user}
+          selectedUsers={this.state.selectedUsers}
+        />
+        <MessageList
+          user={this.props.user}
+          selectedUsers={this.state.selectedUsers}
+        />
         <form
+          id="message-input"
           style={styles.inputContainer}
           onSubmit={this.handleMessage}
         >
           <textarea
+            className='input-area'
             style={styles.input}
             name="content"
             value={this.state.content}
@@ -75,8 +88,12 @@ class Chat extends React.Component {
             onKeyDown={this.onEnterPress}
             placeholder="Send a message ..."
           />
-          <button style={styles.messageBtn} type="submit">
-            <IoIosChatboxes />
+          <button
+            id="send-btn"
+            style={styles.messageBtn}
+            type="submit"
+          >
+            <IoIosSend />
           </button>
         </form>
       </div>
@@ -97,9 +114,16 @@ class Chat extends React.Component {
   handleMessage(e) {
     e.preventDefault();
     if (this.state.content) {
-      axios.post(`${__API_URL__}/message`, {
-        content: this.state.content,
-        withCredentials: 'true',
+      axios({
+        method: 'post',
+        url: `${__API_URL__}/message`,
+        headers: {
+          withCredentials: 'true',
+        },
+        data: {
+          title: this.props.user.name,
+          content: this.state.content,
+        },
       })
         .then(res => {
           this.setState({ content: '' });
@@ -107,6 +131,12 @@ class Chat extends React.Component {
         })
         .catch(err => this.setState({ requestError: err.response.data }));
     }
+  }
+
+  handleUserSelect(user) {
+    this.setState({
+      selectedUsers: [...this.state.selectedUsers, user]
+    });
   }
 }
 

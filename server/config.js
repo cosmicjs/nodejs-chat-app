@@ -4,9 +4,9 @@ var cfg = {};
 cfg.accountSid = process.env.__TWILIO_ACCOUNT_SID__;
 cfg.authToken = process.env.__TWILIO_AUTH_TOKEN__;
 cfg.sendingNumber = process.env.__TWILIO_NUMBER__;
-cfg.adminNumber = process.env.__ADMIN_NUMBER__;
+cfg.adminNumbers = [{ phoneNumber: process.env.__ADMIN_NUMBER__ }];
 
-var requiredConfig = [cfg.accountSid, cfg.authToken, cfg.sendingNumber, cfg.adminNumber];
+var requiredConfig = [cfg.accountSid, cfg.authToken, cfg.sendingNumber, cfg.adminNumbers];
 var isConfigured = requiredConfig.every(function (configValue) {
   return configValue || false;
 });

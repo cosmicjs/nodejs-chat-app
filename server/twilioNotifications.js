@@ -1,18 +1,17 @@
 var twilioClient = require('./twilioClient');
-var fs = require('fs');
-var admins = require('../config.json');
+const admins = require('./config').adminNumbers;
 
-function formatMessage(errorToReport) {
-  return '[This is a test] ALERT! It appears the server is' +
-    'having issues. Exception: ' + errorToReport +
-    '. Go to: http://newrelic.com ' +
-    'for more details.';
+function formatMessage(user, messageText) {
+  return `Message from ${user}: ${messageText}`;
 };
 
-exports.notifyOnError = function (appError, request, response, next) {
-  admins.forEach(function (admin) {
-    var messageToSend = formatMessage(appError.message);
-    twilioClient.sendSms(admin.phoneNumber, messageToSend);
-  });
-  next(appError);
+exports.notifyOnMessage = function (req, res, next) {
+  if (req.session) {
+    const { title, content } = req.body;
+    admins.forEach(function (admin) {
+      var messageToSend = formatMessage(title, content);
+      twilioClient.sendSms(admin.phoneNumber, messageToSend);
+    });
+  }
+  next();
 };

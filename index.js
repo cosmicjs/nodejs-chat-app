@@ -8,6 +8,7 @@ const app = express();
 const session = require('express-session');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
+const twilioNotificatations = require('./server/twilioNotifications');
 const Cosmic = require('cosmicjs');
 const api = Cosmic();
 const bucket = api.bucket({
@@ -47,7 +48,7 @@ io.on('connection', function (socket) {
   });
 
   socket.on('logout', function (user) {
-
+    io.emit('logout', user);
   });
 
   socket.on('message', function (msg) {
@@ -70,7 +71,7 @@ app.post('/api/register', async function (req, response) {
   }
   try {
     let user = await bucket.getObjects({ type: 'users', filters: { title: username } });
-    if (user.status !== 'empty') {
+    if (user.status !== 'empty' || user.objects.find(i => i.title === username)) {
       response.status(400).send({ "message": "user is already logged in" });
       return;
     }
@@ -108,8 +109,8 @@ app.post('/api/logout', async function (req, response) {
   }
 });
 
-app.post('/api/message', async function (req, response) {
-  const { content } = req.body;
+app.post('/api/message', twilioNotificatations.notifyOnMessage, async function (req, response) {
+  const { title, content } = req.body;
   if (!req.session.user_id) {
     response.status(401).send({ "message": "Unauthorized, no session data present" });
     return;
@@ -117,7 +118,7 @@ app.post('/api/message', async function (req, response) {
 
   try {
     let message = await bucket.addObject({
-      title: content,
+      title: title,
       type_slug: "messages",
       content: content,
       metafields: [

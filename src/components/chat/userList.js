@@ -38,15 +38,22 @@ class UserList extends React.Component {
   render() {
     const styles = {
       container: {
+        width: '200px',
+        height: 'calc(100% - 175px)',
+        paddingLeft: '40px',
         position: 'fixed',
-        zIndex: '100',
-        top: '75px',
+        zIndex: '102',
+        cursor: 'pointer',
+        color: '#a9a9a9',
+        top: '62px',
         left: '0',
+        overflowY: 'auto',
+        transition: '0.3s ease-in-out',
       }
     }
 
     return (
-      <div className="userList-container" style={styles.container}>
+      <div className={`userList-container ${this.props.mobileMenuActive}`} style={styles.container}>
         {this.state.users.map(user => {
           if (user._id !== this.props.user._id) {
             return (

@@ -5,7 +5,7 @@ import { ApolloProvider } from 'react-apollo';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { FiLogOut } from "react-icons/fi";
 import axios from 'axios';
-import Socket, { socket } from './lib/socket.js';
+// import Socket, { socket } from './lib/socket.js';
 import LoginForm from './components/loginForm/loginForm.js';
 import Chat from './components/chat/index.js';
 
@@ -21,9 +21,11 @@ class App extends React.Component {
     super()
     this.state = {
       user: {},
+      mobileMenuActive: false,
     }
     this.handleUser = this.handleUser.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
+    this.handleLogoPress = this.handleLogoPress.bind(this);
   }
 
   componentWillMount() {
@@ -58,7 +60,8 @@ class App extends React.Component {
       },
       logo: {
         width: '50px',
-        marginRight: '20px',
+        marginRight: '30px',
+        cursor: 'pointer',
       },
       content: {
         height: 'calc(100% - 60px)',
@@ -78,7 +81,7 @@ class App extends React.Component {
       <ApolloProvider client={client}>
         <div className="app-container" style={styles.container}>
           <header style={styles.header}>
-            <img style={styles.logo} src={logo} />
+            <img style={styles.logo} src={logo} onClick={this.handleLogoPress} />
             <div>
               {this.state.user.name
                 ? <h3>{this.state.user.name} <span style={styles.appBttn} onClick={this.handleLogout}><FiLogOut /></span></h3>
@@ -100,6 +103,7 @@ class App extends React.Component {
               <Route path='/:user'
                 render={props => (
                   <Chat
+                    mobileMenuActive={this.state.mobileMenuActive}
                     user={this.state.user}
                     {...props}
                   />
@@ -120,6 +124,12 @@ class App extends React.Component {
     axios.post(`${__API_URL__}/logout`, { userName: this.state.user.name.replace(/\s+/g, '-').toLowerCase() })
       .then(() => this.setState({ user: {} }))
       .catch(err => console.error(err));
+  }
+
+  handleLogoPress() {
+    if (window.innerWidth < 700) {
+      this.setState({ mobileMenuActive: !this.state.mobileMenuActive });
+    }
   }
 }
 

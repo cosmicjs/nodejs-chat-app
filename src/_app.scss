@@ -10,7 +10,8 @@ a,
 div,
 label,
 button,
-input {
+input,
+textarea {
   font-family: 'Dosis', sans-serif;
 }
 
@@ -20,4 +21,31 @@ input {
 
 .message-container p {
   margin: 0;
+}
+
+#send-btn:hover {
+  color: #20F2FA !important;
+}
+
+.userList-container p:hover {
+  color: #29ABE2;
+}
+
+.message-info p {
+  margin: 0;
+}
+
+@media only screen and (max-width: 700px) {
+  .userList-container {
+    background-color: #ffffff;
+  }
+  .userList-container.false{
+    left: -240px !important;
+  }
+  .messageList-container {
+    width: calc(100% - 40px) !important;
+  }
+  .input-area {
+    width: calc(100% - 120px) !important;
+  }
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import Socket from '../../lib/socket.js';
-import { IoIosPulse, IoIosText } from 'react-icons/io';
+import { IoIosPulse, IoMdChatbubbles } from 'react-icons/io';
 
 const GET_MESSAGES = gql`
   query MessageList($read_key: String!) {
@@ -93,8 +93,11 @@ class MessageList extends React.Component {
         alignItems: 'center',
       },
       messageInfo: {
-        width: '75px',
-        minWidth: '75px',
+        width: '85px',
+        minWidth: '85px',
+      },
+      small: {
+        fontSize: '70%',
       },
       message: {
         width: 'auto',
@@ -103,7 +106,6 @@ class MessageList extends React.Component {
         padding: '10px',
         backgroundColor: '#20F2FA',
         color: '#383838',
-        textShadow: '0.5px 0px 0px #ffffff',
         boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
         borderRadius: '5px',
       },
@@ -124,10 +126,19 @@ class MessageList extends React.Component {
         height: '75px',
         background: 'linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1))',
       },
+      emptyChat: {
+        width: '300px',
+        margin: '100px auto',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
       isUserWrapper: {
         justifyContent: 'flex-end',
       },
       isUserArrow: {
+        marginRight: '5px',
         borderRight: 'none',
         borderLeft: '10px solid #47C8FF',
       },
@@ -146,22 +157,24 @@ class MessageList extends React.Component {
       )
     } else if (!this.state.messages.length) {
       return (
-        <div className="messageList-container">
-          <IoIosText />
-          <h3>No Messages in this chat room.</h3>
+        <div className="messageList-container" style={styles.container}>
+          <div style={styles.emptyChat}>
+            <h4>Uh Oooh..</h4>
+            <IoMdChatbubbles style={{ fontSize: '400%', color: '#29ABE2' }} />
+            <p>It looks like there are no messages here.  Start chatting and others will join you :)</p>
+          </div>
         </div>
-
       )
     }
 
     function formatDate(datestring) {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', "Aug", 'Sep', 'Oct', 'Nov', 'Dec'];
       const date = new Date(datestring);
       const month = date.getMonth();
       const dateNum = date.getDate();
-      const hours = date.getHours();
-      const minutes = date.getMinutes();
+      const time = date.toLocaleTimeString();
 
-      return `${month} ${dateNum}, ${hours}:${minutes}`;
+      return `${months[month]} ${dateNum}, ${time}`;
     }
 
     return (
@@ -178,12 +191,12 @@ class MessageList extends React.Component {
               {this.props.user._id !== message.metadata.user_id
                 ? <div className="message-info" style={styles.messageInfo}>
                   <p>{message.title}</p>
-                  <p>{formatDate(message.created_at)}</p>
+                  <p style={styles.small}>{formatDate(message.created_at)}</p>
                 </div>
                 : null
               }
               {this.props.user._id !== message.metadata.user_id
-                ? <div style={styles.arrow}></div>
+                ? <div style={styles.arrow} />
                 : null
               }
               <span
@@ -200,7 +213,7 @@ class MessageList extends React.Component {
               {this.props.user._id === message.metadata.user_id
                 ? <div className="message-info" style={styles.messageInfo}>
                   <p>You</p>
-                  <p>{formatDate(message.created_at)}</p>
+                  <p style={styles.small}>{formatDate(message.created_at)}</p>
                 </div>
                 : null
               }

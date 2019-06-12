@@ -71,7 +71,7 @@ app.post('/api/register', async function (req, response) {
   }
   try {
     let user = await bucket.getObjects({ type: 'users', filters: { title: username } });
-    if (user.status !== 'empty' || user.objects.find(i => i.title === username)) {
+    if (user.status !== 'empty' && user.objects.find(i => i.title === username)) {
       response.status(400).send({ "message": "user is already logged in" });
       return;
     }

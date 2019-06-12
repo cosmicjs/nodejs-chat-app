@@ -40,15 +40,21 @@ class UserList extends React.Component {
       container: {
         width: '200px',
         height: 'calc(100% - 175px)',
-        paddingLeft: '40px',
+        paddingRight: '40px',
         position: 'fixed',
         zIndex: '102',
-        cursor: 'pointer',
         color: '#a9a9a9',
         top: '62px',
         left: '0',
         overflowY: 'auto',
         transition: '0.3s ease-in-out',
+      },
+      noUsers: {
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
       }
     }
 
@@ -63,6 +69,10 @@ class UserList extends React.Component {
 
           return null
         })}
+        {this.state.users.length < 2
+          ? <div style={styles.noUsers}>No Users in chat</div>
+          : null
+        }
       </div>
     )
   }

@@ -80,15 +80,15 @@ class App extends React.Component {
     return (
       <ApolloProvider client={client}>
         <div className="app-container" style={styles.container}>
-          <header style={styles.header}>
-            <img style={styles.logo} src={logo} onClick={this.handleLogoPress} />
-            <div>
-              {this.state.user.name
-                ? <h3>{this.state.user.name} <span style={styles.appBttn} onClick={this.handleLogout}><FiLogOut /></span></h3>
-                : null
-              }
-            </div>
-          </header>
+          {this.state.user.name
+            ? <header style={styles.header}>
+              <img style={styles.logo} src={logo} onClick={this.handleLogoPress} />
+              <div>
+                <h3>{this.state.user.name} <span style={styles.appBttn} onClick={this.handleLogout}><FiLogOut /></span></h3>
+              </div>
+            </header>
+            : null
+          }
           <div className="app-content" style={styles.content}>
             <BrowserRouter>
               <Route exact path='/'

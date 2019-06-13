@@ -25,7 +25,7 @@ class App extends React.Component {
     }
     this.handleUser = this.handleUser.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
-    this.handleLogoPress = this.handleLogoPress.bind(this);
+    this.handleMobileMenu = this.handleMobileMenu.bind(this);
   }
 
   componentWillMount() {
@@ -82,7 +82,7 @@ class App extends React.Component {
         <div className="app-container" style={styles.container}>
           {this.state.user.name
             ? <header style={styles.header}>
-              <img style={styles.logo} src={logo} onClick={this.handleLogoPress} />
+              <img style={styles.logo} src={logo} onClick={this.handleMobileMenu} />
               <div>
                 <h3>{this.state.user.name} <span style={styles.appBttn} onClick={this.handleLogout}><FiLogOut /></span></h3>
               </div>
@@ -104,6 +104,8 @@ class App extends React.Component {
                 render={props => (
                   <Chat
                     mobileMenuActive={this.state.mobileMenuActive}
+                    handleLogout={this.handleLogout}
+                    handleMobileMenu={this.handleMobileMenu}
                     user={this.state.user}
                     {...props}
                   />
@@ -126,7 +128,7 @@ class App extends React.Component {
       .catch(err => console.error(err));
   }
 
-  handleLogoPress() {
+  handleMobileMenu() {
     if (window.innerWidth < 700) {
       this.setState({ mobileMenuActive: !this.state.mobileMenuActive });
     }

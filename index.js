@@ -39,6 +39,7 @@ const PORT = process.env.PORT || 3000;
  *  @register - should emit when a user registers a username.
  *  @logout - should emit when a new user logs out.
  *  @message - should emit a message to users when users send a message.
+ *  @isOnline - should emit when a user enters the chat room.
  * 
  */
 io.on('connection', function (socket) {
@@ -53,6 +54,13 @@ io.on('connection', function (socket) {
   socket.on('message', function (msg) {
     io.emit('message', msg);
   });
+
+  socket.on('isOnline', function (user) {
+    io.emit('isOnline', user);
+  });
+  socket.on('disconnect', function (user) {
+    io.emit('disconnected', user);
+  })
 });
 
 /**

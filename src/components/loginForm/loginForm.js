@@ -150,7 +150,7 @@ class LoginForm extends React.Component {
         this.props.handleUser(res.data);
         socket.emit('register', res.data);
       })
-      .catch(err => this.setState({ requestError: err.response.data }));
+      .catch(err => this.setState({ requestError: err }));
   }
 }
 

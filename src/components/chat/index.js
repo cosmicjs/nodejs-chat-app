@@ -19,6 +19,10 @@ class Chat extends React.Component {
     this.handleUserSelect = this.handleUserSelect.bind(this);
   }
 
+  componentDidMount() {
+    socket.emit('isOnline', this.props.user);
+  }
+
   render() {
     if (!Object.keys(this.props.user).length) {
       return <Redirect to='/' />
@@ -67,6 +71,8 @@ class Chat extends React.Component {
       <div className="chat-container" style={styles.container}>
         <UserList
           mobileMenuActive={this.props.mobileMenuActive}
+          handleMobileMenu={this.props.handleMobileMenu}
+          handleLogout={this.props.handleLogout}
           user={this.props.user}
           selectedUsers={this.state.selectedUsers}
         />
@@ -129,7 +135,7 @@ class Chat extends React.Component {
           this.setState({ content: '' });
           socket.emit('message', res.data);
         })
-        .catch(err => this.setState({ requestError: err.response.data }));
+        .catch(err => this.setState({ requestError: err }));
     }
   }
 

@@ -20,16 +20,27 @@ class UserList extends React.Component {
     this.state = {
       users: []
     }
+    this.handleUserIsOnline = this.handleUserIsOnline.bind(this);
   }
 
   componentDidMount() {
     Socket.subscribeToRegister(this.props.data.refetch);
     Socket.subscribeToLogout(this.props.data.refetch);
+    Socket.subscribeToIsOnline((err, user) => this.handleUserIsOnline(user));
   }
 
   static getDerivedStateFromProps(props, state) {
-    const tempState = Object.assign({}, state)
+    let userFound = false;
+    const tempState = Object.assign({}, state);
     if (props.data.objectsByType) {
+      for (const user of props.data.objectsByType) {
+        if (user._id === props.user._id) {
+          userFound = true
+        }
+      }
+      if (!userFound) {
+        props.handleLogout();
+      }
       tempState.users = props.data.objectsByType
     }
 
@@ -60,7 +71,14 @@ class UserList extends React.Component {
     }
 
     return (
-      <div className={`userList-container ${this.props.mobileMenuActive}`} style={styles.container}>
+      <div
+        className={`userList-container ${this.props.mobileMenuActive}`}
+        style={styles.container}
+      >
+        <div
+          className={`mobileMenuModal ${this.props.mobileMenuActive}`}
+          onClick={this.props.handleMobileMenu}
+        />
         {this.state.users.map(user => {
           if (user._id !== this.props.user._id) {
             return (
@@ -76,6 +94,16 @@ class UserList extends React.Component {
         }
       </div>
     )
+  }
+
+  handleUserIsOnline(user) {
+    let temp = Object.assign([], this.state.users);
+    for (const u of temp) {
+      if (u._id === user._id) {
+        u.isOnline = true;
+      }
+    }
+    this.setState({ users: temp });
   }
 }
 

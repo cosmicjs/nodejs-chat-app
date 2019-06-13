@@ -90,8 +90,8 @@ app.post('/api/register', async function (req, response) {
  * Logout route that destroys user object
  */
 app.post('/api/logout', async function (req, response) {
-  const { userName } = req.body;
-  if (!userName) {
+  const { username } = req.body;
+  if (!username) {
     response.status(400).send('No username');
   }
   if (req.session) {
@@ -99,7 +99,7 @@ app.post('/api/logout', async function (req, response) {
   }
   try {
     let deleteUserData = await bucket.deleteObject({
-      slug: userName
+      slug: username
     });
     response.status(204).send(deleteUserData);
     return;

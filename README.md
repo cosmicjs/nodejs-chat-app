@@ -1,8 +1,14 @@
 # cosmic-messenger
-Simple Chat Application with SMS configuration.
+Full Stack Chat Application with SMS configuration.
+
+## Requirements
+- [Cosmic JS Bucket](https://cosmicjs.com/add-bucket?import_bucket=5cf1605916e7ec14adabbb89)
+- [Twilio Credentials](https://www.twilio.com/console)
+
+## Installation
 
 `$ touch .env`
-## required environment variables
+### required environment variables
 - __API_SECRET__: secret string for signing session cookies
 - __API_ORIGIN__: URI for configuring web sockets and making api requests
 - __COSMIC_READ_KEY__: Your Cosmic JS read access key

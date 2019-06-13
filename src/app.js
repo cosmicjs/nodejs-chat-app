@@ -5,7 +5,7 @@ import { ApolloProvider } from 'react-apollo';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { FiLogOut } from "react-icons/fi";
 import axios from 'axios';
-// import Socket, { socket } from './lib/socket.js';
+import { socket } from './lib/socket.js';
 import LoginForm from './components/loginForm/loginForm.js';
 import Chat from './components/chat/index.js';
 
@@ -121,8 +121,8 @@ class App extends React.Component {
   }
 
   handleLogout() {
-    axios.post(`${__API_URL__}/logout`, { userName: this.state.user.name.replace(/\s+/g, '-').toLowerCase() })
-      .then(() => this.setState({ user: {} }))
+    axios.post(`${__API_URL__}/logout`, { username: this.state.user.name.replace(/\s+/g, '-').toLowerCase() })
+      .then(() => this.setState({ user: {} }, () => socket.emit('logout', {})))
       .catch(err => console.error(err));
   }
 

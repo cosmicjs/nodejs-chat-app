@@ -50,7 +50,6 @@ module.exports = {
       __API_URL__: JSON.stringify(client_api_url),
       __API_ORIGIN__: JSON.stringify(process.env.__API_ORIGIN__),
       __COSMIC_READ_KEY__: JSON.stringify(process.env.__COSMIC_READ_KEY__),
-      __COSMIC_WRITE_KEY__: JSON.stringify(process.env.__COSMIC_WRITE_KEY__),
     })
   ],
   devServer: {

@@ -6,7 +6,7 @@ import { IoIosPulse, IoMdChatbubbles } from 'react-icons/io';
 
 const GET_MESSAGES = gql`
   query MessageList($read_key: String!) {
-    objectsByType(bucket_slug: "cosmic-messenger", type_slug: "messages", read_key: $read_key ) {
+    objectsByType(bucket_slug: "cosmic-messenger", type_slug: "messages", read_key: $read_key, limit: 75 ) {
       _id
       title
       content
@@ -34,11 +34,10 @@ class MessageList extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (
-      !this.props.data.loading
-      || prevProps.data.objectsByType.length !== this.props.data.objectByType.length
-    ) {
-      this.scrollToBottom();
+    if (!this.props.data.loading) {
+      if (prevProps.data.objectsByType !== this.props.data.objecstByType) {
+        this.scrollToBottom();
+      }
     }
   }
 
@@ -169,16 +168,6 @@ class MessageList extends React.Component {
       )
     }
 
-    function formatDate(datestring) {
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', "Aug", 'Sep', 'Oct', 'Nov', 'Dec'];
-      const date = new Date(datestring);
-      const month = date.getMonth();
-      const dateNum = date.getDate();
-      const time = date.toLocaleTimeString();
-
-      return `${months[month]} ${dateNum}, ${time}`;
-    }
-
     return (
       <div className="messageList-container" style={styles.container}>
         <div style={styles.messagesTop}>End of Messages</div>
@@ -227,6 +216,16 @@ class MessageList extends React.Component {
         <div style={styles.listGradient} />
       </div >
     )
+
+    function formatDate(datestring) {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', "Aug", 'Sep', 'Oct', 'Nov', 'Dec'];
+      const date = new Date(datestring);
+      const month = date.getMonth();
+      const dateNum = date.getDate();
+      const time = date.toLocaleTimeString();
+
+      return `${months[month]} ${dateNum}, ${time}`;
+    }
   }
 
   scrollToBottom() {

@@ -1,7 +1,7 @@
 import React from 'react';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
-import Socket from '../../lib/socket.js';
+import Socket, { socket } from '../../lib/socket.js';
 
 const GET_USERS = gql`
   query UserList($read_key: String!) {
@@ -18,7 +18,8 @@ class UserList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      users: []
+      users: [],
+      userFound: false
     }
     this.handleUserIsOnline = this.handleUserIsOnline.bind(this);
   }
@@ -30,22 +31,24 @@ class UserList extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    let userFound = false;
     const tempState = Object.assign({}, state);
     if (props.data.objectsByType) {
       for (const user of props.data.objectsByType) {
         if (user._id === props.user._id) {
-          userFound = true
+          tempState.userFound = true
         }
       }
-      if (!userFound) {
-        props.handleLogout();
+      if (!tempState.userFound) {
+        props.handleUser({});
+        socket.emit('logout', {});
       }
       tempState.users = props.data.objectsByType
     }
 
     return tempState
   }
+
+
 
   render() {
     const styles = {

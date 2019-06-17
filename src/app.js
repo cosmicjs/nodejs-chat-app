@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { hydrate } from 'react-dom';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
 import { BrowserRouter, Route } from 'react-router-dom';
@@ -104,7 +104,7 @@ class App extends React.Component {
                 render={props => (
                   <Chat
                     mobileMenuActive={this.state.mobileMenuActive}
-                    handleLogout={this.handleLogout}
+                    handleUser={this.handleUser}
                     handleMobileMenu={this.handleMobileMenu}
                     user={this.state.user}
                     {...props}
@@ -135,7 +135,7 @@ class App extends React.Component {
   }
 }
 
-ReactDOM.hydrate(
+hydrate(
   <App />,
   document.getElementById('app')
 );

@@ -2,9 +2,21 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { socket } from '../../lib/socket.js';
 import axios from 'axios';
+import gql from 'graphql-tag';
+import { graphql } from 'react-apollo';
 import { IoIosSend } from "react-icons/io";
 import MessageList from './messageList.js';
 import UserList from './userList.js';
+
+const GET_ADMINS = gql`
+  query AdminList($read_key: String!) {
+    objectsByType(bucket_slug: "cosmic-messenger", type_slug: "admins", read_key: $read_key ) {
+      _id
+      slug
+      metadata
+    }
+  }
+`
 
 class Chat extends React.Component {
   constructor() {
@@ -72,7 +84,7 @@ class Chat extends React.Component {
         <UserList
           mobileMenuActive={this.props.mobileMenuActive}
           handleMobileMenu={this.props.handleMobileMenu}
-          handleLogout={this.props.handleLogout}
+          handleUser={this.props.handleUser}
           user={this.props.user}
           selectedUsers={this.state.selectedUsers}
         />
@@ -119,7 +131,7 @@ class Chat extends React.Component {
 
   handleMessage(e) {
     e.preventDefault();
-    if (this.state.content) {
+    if (this.state.content.trim().length) {
       axios({
         method: 'post',
         url: `${__API_URL__}/message`,
@@ -146,4 +158,13 @@ class Chat extends React.Component {
   }
 }
 
-export default Chat;
+export default graphql(GET_ADMINS, {
+  options: {
+    variables: {
+      read_key: __COSMIC_READ_KEY__,
+    }
+  },
+  props: ({ data }) => ({
+    data,
+  })
+})(Chat);

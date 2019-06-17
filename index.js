@@ -60,7 +60,7 @@ io.on('connection', function (socket) {
   });
   socket.on('disconnect', function (user) {
     io.emit('disconnected', user);
-  })
+  });
 });
 
 /**
@@ -116,10 +116,13 @@ app.post('/api/logout', async function (req, response) {
   }
 });
 
-app.post('/api/message', twilioNotificatations.notifyOnMessage, async function (req, response) {
+/**
+ * Route that handles text messages
+ */
+app.post('/api/message', twilioNotificatations.notifyOnMessage, async function (req, res) {
   const { title, content } = req.body;
   if (!req.session.user_id) {
-    response.status(401).send({ "message": "Unauthorized, no session data present" });
+    res.status(401).send({ "message": "Unauthorized, no session data present" });
     return;
   }
 
@@ -132,9 +135,9 @@ app.post('/api/message', twilioNotificatations.notifyOnMessage, async function (
         { "key": "user_id", "type": "text", "value": req.session.user_id }
       ],
     });
-    response.status(200).send(message);
+    res.status(200).send(message);
   } catch (err) {
-    response.status(400).send({ "message": "Error creating message", "error": err });
+    res.status(400).send({ "message": "Error creating message", "error": err });
   }
 })
 

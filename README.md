@@ -1,5 +1,9 @@
-# cosmic-messenger
+# Node.js Chat App
+![image](https://cosmic-s3.imgix.net/774ef9f0-8eda-11e9-a428-fd5043d74680-Cosmic-Messenger.png?w=1000)
+
 Full Stack Chat Application with SMS configuration.
+
+### [View Demo](https://cosmicjs.com/apps/cosmic-messenger)
 
 ## Requirements
 - [Cosmic JS Bucket](https://cosmicjs.com/add-bucket?import_bucket=5cf1605916e7ec14adabbb89)

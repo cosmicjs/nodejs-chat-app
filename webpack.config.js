@@ -1,6 +1,7 @@
 require('dotenv').config();
 const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+// var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const dev = Boolean(process.env.NODE_ENV !== 'production');
 let client_api_url = 'http://localhost:3000/api';
@@ -46,6 +47,10 @@ module.exports = {
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new CleanWebpackPlugin,
+    // new HtmlWebpackPlugin({
+    //   filename: 
+    //   favicon: './public/favicon.ico',
+    // }),
     new webpack.DefinePlugin({
       __API_URL__: JSON.stringify(client_api_url),
       __API_ORIGIN__: JSON.stringify(process.env.__API_ORIGIN__),

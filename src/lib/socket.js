@@ -19,7 +19,12 @@ const subscribeToLogout = (callback) => {
 
 const subscribeToIsOnline = (callback) => {
   socket.on('isOnline', user => callback(null, user));
-  socket.emit('subcribeToIsOnline');
+  socket.emit('subscribeToIsOnline');
+}
+
+const subscribeToIsOffline = (callback) => {
+  socket.on('isOffline', user => callback(null, user));
+  socket.emit('subcribeToIsOffline');
 }
 
 export default {
@@ -27,4 +32,5 @@ export default {
   subscribeToRegister,
   subscribeToLogout,
   subscribeToIsOnline,
+  subscribeToIsOffline,
 }

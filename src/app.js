@@ -119,7 +119,7 @@ class App extends React.Component {
   }
 
   handleUser(user) {
-    this.setState({ user })
+    this.setState({ user });
   }
 
   handleLogout() {

@@ -42,6 +42,10 @@ textarea {
     cursor: pointer;
   }
 
+  p.active {
+    color: lightgreen;
+  }
+
   p:hover {
     color: #29ABE2;
   }
@@ -49,6 +53,7 @@ textarea {
 
 .message-info p {
   margin: 0;
+  text-overflow: ellipsis;
 }
 
 footer {

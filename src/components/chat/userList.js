@@ -21,13 +21,13 @@ class UserList extends React.Component {
       users: [],
       userFound: false
     }
-    this.handleUserIsOnline = this.handleUserIsOnline.bind(this);
   }
 
   componentDidMount() {
     Socket.subscribeToRegister(this.props.data.refetch);
     Socket.subscribeToLogout(this.props.data.refetch);
-    Socket.subscribeToIsOnline((err, user) => this.handleUserIsOnline(user));
+    Socket.subscribeToIsOnline(this.props.data.refetch);
+    Socket.subscribeToIsOffline(this.props.data.refetch);
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -83,9 +83,10 @@ class UserList extends React.Component {
           onClick={this.props.handleMobileMenu}
         />
         {this.state.users.map(user => {
+          const userIsOnline = Boolean(user.metadata && user.metadata.is_online);
           if (user._id !== this.props.user._id) {
             return (
-              <p key={user._id}>{user.title}</p>
+              <p className={userIsOnline ? 'active' : 'inactive'} key={user._id}>{user.title}</p>
             )
           }
 
@@ -97,16 +98,6 @@ class UserList extends React.Component {
         }
       </div>
     )
-  }
-
-  handleUserIsOnline(user) {
-    let temp = Object.assign([], this.state.users);
-    for (const u of temp) {
-      if (u._id === user._id) {
-        u.isOnline = true;
-      }
-    }
-    this.setState({ users: temp });
   }
 }
 

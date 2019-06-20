@@ -32,7 +32,7 @@ class Chat extends React.Component {
   }
 
   componentDidMount() {
-    socket.emit('isOnline', this.props.user);
+    socket.emit('connected', this.props.user);
   }
 
   render() {

@@ -1,5 +1,5 @@
 {
-  "name": "cosmic-messenger",
+  "name": "cosmic-messenger-nodejs",
   "version": "1.0.0",
   "description": "web based messaging service.",
   "main": "index.js",
